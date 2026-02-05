@@ -37,7 +37,11 @@ ColorEnum convert_by_pun(Color c) {
 
     TypePun pun;
     // TODO: 补全类型双关转换
-
+    // 在 union 里做“类型双关”的关键步骤就是：先写入一个成员，再从另一个成员读出。
+    // 这种 union 类型双关在 C++ 中是未定义行为（UB）
+    // 在真实项目中，正确、安全的做法通常是显式转换，例如：
+    // return static_cast<ColorEnum>(static_cast<int>(c));
+    pun.c = c;
     return pun.e;
 }
 

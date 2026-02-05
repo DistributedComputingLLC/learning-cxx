@@ -30,9 +30,13 @@ struct A {
         std::cout << ++i << ". " << "~A(" << a << ')' << std::endl;
     }
 };
+// B 是派生类
+// A 是基类
 struct B : public A {
+    // X 是 B 的成员对象
     X x;
-
+    // 对象构造顺序永远是：1. 基类 2. 成员变量 3. 派生类自身
+    // 对象dsct顺序正好相反: 1. 派生类自身 2. 成员变量 3. 基类
     B(int b) : A(1), x(b) {
         std::cout << ++i << ". " << "B(" << a << ", X(" << x.x << "))" << std::endl;
     }
@@ -45,14 +49,15 @@ struct B : public A {
 };
 
 int main(int argc, char **argv) {
+    // 1. X(1) 2. A(2) 3. A(1) 4. X(3) 5. B(1, X(3))
     X x = X(1);
     A a = A(2);
     B b = B(3);
 
     // TODO: 补全三个类型的大小
-    static_assert(sizeof(X) == ?, "There is an int in X");
-    static_assert(sizeof(A) == ?, "There is an int in A");
-    static_assert(sizeof(B) == ?, "B is an A with an X");
+    static_assert(sizeof(X) == 4, "There is an int in X");
+    static_assert(sizeof(A) == 4, "There is an int in A");
+    static_assert(sizeof(B) == 8, "B is an A with an X");
 
     i = 0;
     std::cout << std::endl
@@ -63,6 +68,9 @@ int main(int argc, char **argv) {
     // B ba = A(4);
 
     // 这也是不可能的，因为 A 是 B 的一部分，就好像不可以把套娃的外层放进内层里。
+    // A ab = B(5); —— 对象切片（Object Slicing）
+    // 1. A(1) 2. X(5) 3. B(1, X(5)) 4. A(A const &) : a(1)
+    // 5. ~B(1, X(5)) 6. ~X(5) 7. ~A(1)
     A ab = B(5);// 然而这个代码可以编译和运行！
     // THINK: 观察打印出的信息，推测把大象放进冰箱分几步？
     // THINK: 这样的代码是“安全”的吗？
@@ -72,6 +80,7 @@ int main(int argc, char **argv) {
     std::cout << std::endl
               << "-------------------------" << std::endl
               << std::endl;
-
+    // 1. ~A(1) 2. ~B(1, X(3)) 3. ~X(3)
+    // 4. ~A(1) 5. ~A(2) 6. ~X(1)
     return 0;
 }

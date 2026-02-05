@@ -4,7 +4,21 @@
 bool is_fibonacci(int *ptr, int len, int stride) {
     ASSERT(len >= 3, "`len` should be at least 3");
     // TODO: 编写代码判断从 ptr 开始，每 stride 个元素取 1 个元素，组成长度为 n 的数列是否满足
-    // arr[i + 2] = arr[i] + arr[i + 1]
+    // int *ptr：数组已经退化为指针，只能用指针运算
+    // len 表示取多少个数，不是数组真实长度, 
+    // stride 控制“隔几个元素取一个”
+    // ++it; increment, no temporary
+    // it++; increment, but returns old value → may create a temporary
+    for (int i = 2; i < len; ++i) {
+        // ptr + i * stride 或 ptr[i * stride] 等价
+        int cur  = ptr[i * stride];
+        int prev = ptr[(i - 1) * stride];
+        int prev2 = ptr[(i - 2) * stride];
+
+        if (cur != prev + prev2) {
+            return false;
+        }
+    }
     return true;
 }
 

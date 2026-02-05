@@ -1,14 +1,39 @@
 #include "../exercise.h"
 
-constexpr unsigned long long fibonacci(int i) {
-    switch (i) {
-        case 0:
-            return 0;
-        case 1:
-            return 1;
-        default:
-            return fibonacci(i - 1) + fibonacci(i - 2);
+// constexpr unsigned long long fibonacci(int i) {
+//     switch (i) {
+//         case 0:
+//             return 0;
+//         case 1:
+//             return 1;
+//         default:
+//             return fibonacci(i - 1) + fibonacci(i - 2);
+//     }
+// }
+
+// unsigned long long fibonacci(int n) {
+//     static unsigned long long memo[100] = {};
+//     if (n == 0) return 0;
+//     if (n == 1) return 1;
+
+//     if (memo[n] != 0)
+//         return memo[n];
+
+//     memo[n] = fibonacci(n - 1) + fibonacci(n - 2);
+//     return memo[n];
+// }
+
+constexpr unsigned long long fibonacci(int n) {
+    unsigned long long a = 0;
+    unsigned long long b = 1;
+
+    for (int i = 0; i < n; ++i) {
+        unsigned long long next = a + b;
+        a = b;
+        b = next;
     }
+
+    return a;
 }
 
 int main(int argc, char **argv) {
@@ -19,7 +44,7 @@ int main(int argc, char **argv) {
     // TODO: 观察错误信息，修改一处，使代码编译运行
     // PS: 编译运行，但是不一定能算出结果……
     constexpr auto ANS_N = 90;
-    constexpr auto ANS = fibonacci(ANS_N);
+    auto ANS = fibonacci(ANS_N);
     std::cout << "fibonacci(" << ANS_N << ") = " << ANS << std::endl;
 
     return 0;
